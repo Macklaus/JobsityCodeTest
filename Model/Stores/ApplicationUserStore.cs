@@ -41,7 +41,7 @@ namespace Model.Stores
 
         public async Task<IdentityResult> DeleteAsync(ApplicationUser user, CancellationToken cancellationToken)
         {
-            return IdentityResult.Success;
+            return await Task.FromResult(IdentityResult.Success);
         }
 
         public void Dispose() { }
@@ -108,8 +108,11 @@ namespace Model.Stores
 
             using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
             {
-                ApplicationUser? target = await _context.ApplicationUsers.FirstOrDefaultAsync(u => u.Id == user.Id, cancellationToken);
-                // validation
+                ApplicationUser target = await _context.ApplicationUsers.FirstOrDefaultAsync(u => u.Id == user.Id, cancellationToken);
+                
+                if (target == null)
+                    return IdentityResult.Failed(new IdentityError { Description = Constants.NotUserFound });
+
                 target.Update(user);
                 await _context.SaveChangesAsync(cancellationToken);
                 await transaction.CommitAsync();

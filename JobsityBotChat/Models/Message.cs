@@ -8,7 +8,7 @@ namespace WebApi.Models
         public string Text { get; set; }
         public DateTime Timestamp { get; }
         public ApplicationUser User { get; set; }
-        public Chatroom? Chat { get; set; }
+        public Chatroom Chat { get; set; } = null;
 
         #region mappers
 
