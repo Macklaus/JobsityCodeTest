@@ -45,9 +45,7 @@ namespace WebApi.Extensions
             return new Model.Entities.Message()
             {
                 GuidId = entity.GuidId,
-                Text = entity.Text,
-                User = ApplicationUser.MapToEntityModel(entity.User),
-                Chat = entity.Chat.MapToEntityModel()
+                Text = entity.Text
             };
         }
 
@@ -60,8 +58,37 @@ namespace WebApi.Extensions
             {
                 GuidId = entity.GuidId,
                 Text = entity.Text,
-                User = ApplicationUser.MapToWebModel(entity.User),
-                Chat = entity.Chat.MapToWebModel()
+                ChatId = entity.Chat.GuidId,
+                OwnerName = entity.User.UserName,
+                Timestamp = entity.Timestamp
+            };
+        }
+        #endregion
+
+        #region users
+        public static Model.Entities.ApplicationUser MapToEntityModel(this ApplicationUser user)
+        {
+            if (user == null)
+                return null;
+
+            return new Model.Entities.ApplicationUser()
+            {
+                Email = user.Email,
+                UserName = user.UserName,
+                PasswordHash = user.PasswordHash
+            };
+        }
+
+        public static ApplicationUser MapToWebModel(this Model.Entities.ApplicationUser applicationUser)
+        {
+            if (applicationUser == null)
+                return null;
+
+            return new ApplicationUser()
+            {
+                Email = applicationUser.Email,
+                PasswordHash = applicationUser.PasswordHash,
+                UserName = applicationUser.UserName
             };
         }
         #endregion

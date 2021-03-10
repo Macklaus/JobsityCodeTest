@@ -49,15 +49,12 @@ namespace WebApi.Controllers
             if (string.IsNullOrEmpty(chatId))
                 return BadRequest(chatId);
 
-            var messsageEntity = message.MapToEntityModel();
-            var chatroom = await _chatRepository.InsertNewMessageAsync(chatId, messsageEntity);
+            var messageResponse = await _chatRepository.InsertNewMessageAsync(chatId, message.MapToEntityModel());
 
-            if (chatroom == null)
-                return NotFound(chatroom);
+            if (messageResponse == null)
+                return NotFound(chatId);
 
-            messsageEntity.GuidId = Guid.NewGuid().ToString();
-            messsageEntity.Chat = chatroom;
-            await _messageRepository.CreateAsync(messsageEntity);
+            await _messageRepository.CreateAsync(messageResponse);
 
             return Ok();
         }
@@ -85,7 +82,7 @@ namespace WebApi.Controllers
         public async Task<IEnumerable<Chatroom>> GetAll()
         {
             var entityModelChatrooms = await _chatRepository.GetAllAsync();
-            var webModelChatrooms = entityModelChatrooms.MapToEntityModel();
+            var webModelChatrooms = entityModelChatrooms.MapToWebModelList();
             return webModelChatrooms;
         }
     }

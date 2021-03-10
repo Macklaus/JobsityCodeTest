@@ -11,10 +11,10 @@ namespace DataAccess.Repositories
 {
     public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IApplicationUserRepository
     {
-        private readonly ApplicationUserStore _store;
+        private readonly IUserPasswordStore<ApplicationUser> _store;
         private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public ApplicationUserRepository(ChatDbContext context, ApplicationUserStore store, SignInManager<ApplicationUser> signInManager)
+        public ApplicationUserRepository(ChatDbContext context, IUserPasswordStore<ApplicationUser> store, SignInManager<ApplicationUser> signInManager)
             : base(context)
         {
             _store = store;

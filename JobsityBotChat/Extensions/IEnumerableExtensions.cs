@@ -46,7 +46,7 @@ namespace WebApi.Extensions
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
-        public static IEnumerable<Chatroom> MapToEntityModel(this IEnumerable<Model.Entities.Chatroom> list)
+        public static IEnumerable<Chatroom> MapToWebModelList(this IEnumerable<Model.Entities.Chatroom> list)
         {
             if (list == null)
                 return null;

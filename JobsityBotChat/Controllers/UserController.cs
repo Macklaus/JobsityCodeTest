@@ -1,6 +1,7 @@
 ﻿using DataAccess.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using WebApi.Extensions;
 using WebApi.Models;
 
 namespace WebApi.Controllers
@@ -22,7 +23,7 @@ namespace WebApi.Controllers
             if (user == null)
                 return BadRequest(user);
 
-            var applicationUser = ApplicationUser.MapToEntityModel(user);
+            var applicationUser = user.MapToEntityModel();
 
             if (!applicationUser.Validate())
                 return BadRequest(user);

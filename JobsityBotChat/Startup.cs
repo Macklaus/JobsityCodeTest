@@ -45,7 +45,7 @@ namespace JobsityBotChat
                 .AddEntityFrameworkStores<ChatDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<IUserPasswordStore<ApplicationUser>, ApplicationUserStore>();
             services.AddScoped<IChatRepository, ChatRepository>();
             services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
             services.AddScoped<IMessageRepository, MessageRepository>();

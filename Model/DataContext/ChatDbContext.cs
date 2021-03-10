@@ -9,8 +9,6 @@ namespace Model.DataContext
 
         public ChatDbContext() { }
 
-        public ChatDbContext(DbContextOptions options) : base(options) { }
-
         public ChatDbContext(DbContextOptions<ChatDbContext> options) : base(options) { }
 
         public DbSet<Chatroom> ChatRooms { get; set; }

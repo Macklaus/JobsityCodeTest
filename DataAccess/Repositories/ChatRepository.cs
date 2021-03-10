@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Model.DataContext;
 using Model.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,30 +14,50 @@ namespace DataAccess.Repositories
 
         public ChatRepository(ChatDbContext context) : base(context) { }
 
-        public async Task<IEnumerable<Message>> GetMessagesByChatIdAsync(string chatId)
+        public async Task<Chatroom> FindByGuidId(string guid)
         {
-            var chatroom = await _context.ChatRooms.Include(x => x.Messages)
-                .FirstOrDefaultAsync(x => x.GuidId == chatId);
-
-            if(chatroom != null)
-            {
-                return chatroom.Messages.Take(chatroom.CantMessageToShow);
-            }
-
-            return new List<Message>();
+            return await _context.ChatRooms.Include(x => x.Messages)
+                .FirstOrDefaultAsync(x => x.GuidId == guid);
         }
 
-        public async Task<Chatroom> InsertNewMessageAsync(string chatId, Message message)
+        public async Task<IEnumerable<Message>> GetMessagesByChatIdAsync(string chatId)
+        {
+            var messages = Enumerable.Empty<Message>();
+
+            var chatroom = await FindByGuidId(chatId);
+            if(chatroom != null)
+            {
+                if(chatroom.Messages != null)
+                {
+                    messages = chatroom.Messages
+                        .Take(chatroom.CantMessageToShow)
+                        .OrderByDescending(x => x.Timestamp);
+                }
+            }
+
+            return messages;
+        }
+
+        public async Task<Message> InsertNewMessageAsync(string chatId, Message message)
         {
             var chatroom = await _context.ChatRooms.Include(x => x.Messages)
                 .FirstOrDefaultAsync(x => x.GuidId == chatId);
 
             if (chatroom != null)
             {
-                chatroom.Messages.Append(message);
+                var newMessage = new Message(message.Text, message.User, message.Chat);
+                if(chatroom.Messages != null)
+                {
+                    chatroom.Messages.Append(newMessage);
+                } else
+                {
+                    var newMessageList = new List<Message>();
+                    newMessageList.Add(newMessage);
+                    chatroom.Messages = newMessageList;
+                }
             }
 
-            return chatroom;
+            return message;
         }
 
         public async Task<bool> UpdateCantMessageToShowInChatroomAsync(string chatId, int newCantMessageToShow)

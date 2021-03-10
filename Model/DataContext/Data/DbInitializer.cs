@@ -41,7 +41,7 @@ namespace Model.DataContext.Data
                         Name = "Main chatroom",
                         CantMessageToShow = 50,
                         Type = Utils.ChatTypeEnum.Public,
-                        Messages = new List<Message>(),
+                        Messages = Enumerable.Empty<Message>()
                     };
 
                     _context.ChatRooms.Add(chatroom);
