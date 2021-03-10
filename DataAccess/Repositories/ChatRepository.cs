@@ -2,10 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Model.DataContext;
 using Model.Entities;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DataAccess.Repositories
@@ -18,7 +16,7 @@ namespace DataAccess.Repositories
         public async Task<IEnumerable<Message>> GetMessagesByChatIdAsync(string chatId)
         {
             var chatroom = await _context.ChatRooms.Include(x => x.Messages)
-                .FirstOrDefaultAsync(x => x.Id == chatId);
+                .FirstOrDefaultAsync(x => x.GuidId == chatId);
 
             if(chatroom != null)
             {
@@ -31,7 +29,7 @@ namespace DataAccess.Repositories
         public async Task<Chatroom> InsertNewMessageAsync(string chatId, Message message)
         {
             var chatroom = await _context.ChatRooms.Include(x => x.Messages)
-                .FirstOrDefaultAsync(x => x.Id == chatId);
+                .FirstOrDefaultAsync(x => x.GuidId == chatId);
 
             if (chatroom != null)
             {
@@ -44,7 +42,7 @@ namespace DataAccess.Repositories
         public async Task<bool> UpdateCantMessageToShowInChatroomAsync(string chatId, int newCantMessageToShow)
         {
             var chatroom = await _context.ChatRooms.Include(x => x.Messages)
-                .FirstOrDefaultAsync(x => x.Id == chatId);
+                .FirstOrDefaultAsync(x => x.GuidId == chatId);
 
             if (chatroom == null)
                 return false;

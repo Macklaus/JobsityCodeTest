@@ -1,11 +1,16 @@
 ﻿using Model.Utils;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Model.Entities
 {
     public class Chatroom
     {
-        public string Id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+        public string GuidId { get; set; }
         public string Name { get; set; }
         public int CantMessageToShow { get; set; }
         public ChatTypeEnum Type { get; set; }

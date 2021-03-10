@@ -1,8 +1,10 @@
 ﻿using DataAccess.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebApi.Models;
+using WebApi.Extensions;
 
 namespace WebApi.Controllers
 {
@@ -24,7 +26,9 @@ namespace WebApi.Controllers
             if (chatroom == null)
                 return BadRequest(chatroom);
 
-            var entityModel = Chatroom.MapToEntityModel(chatroom);
+            var entityModel = chatroom.MapToEntityModel();
+            entityModel.GuidId = Guid.NewGuid().ToString();
+            entityModel.Messages = new List<Model.Entities.Message>();
             await _chatRepository.CreateAsync(entityModel);
             return Ok(chatroom);
         }
@@ -33,7 +37,7 @@ namespace WebApi.Controllers
         public async Task<IEnumerable<Message>> GetMessageListByChat(string chatId)
         {
             var messages = await _chatRepository.GetMessagesByChatIdAsync(chatId);
-            return Message.MapToWebModelList(messages);
+            return messages.MapToWebModelList();
         }
 
         [HttpPost("message")]
@@ -45,12 +49,13 @@ namespace WebApi.Controllers
             if (string.IsNullOrEmpty(chatId))
                 return BadRequest(chatId);
 
-            var messsageEntity = Message.MapToEntityModel(message);
+            var messsageEntity = message.MapToEntityModel();
             var chatroom = await _chatRepository.InsertNewMessageAsync(chatId, messsageEntity);
 
             if (chatroom == null)
                 return NotFound(chatroom);
 
+            messsageEntity.GuidId = Guid.NewGuid().ToString();
             messsageEntity.Chat = chatroom;
             await _messageRepository.CreateAsync(messsageEntity);
 
@@ -74,6 +79,14 @@ namespace WebApi.Controllers
             {
                 return NotFound(chatId);
             }
+        }
+
+        [HttpGet("all")]
+        public async Task<IEnumerable<Chatroom>> GetAll()
+        {
+            var entityModelChatrooms = await _chatRepository.GetAllAsync();
+            var webModelChatrooms = entityModelChatrooms.MapToEntityModel();
+            return webModelChatrooms;
         }
     }
 }

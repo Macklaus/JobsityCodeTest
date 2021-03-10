@@ -19,12 +19,11 @@ namespace Model.DataContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Message>()
-                .Property(m => m.Timestamp)
+            modelBuilder.Entity<Message>().HasIndex(m => m.GuidId).IsUnique();
+            modelBuilder.Entity<Message>().Property(m => m.Timestamp)
                 .HasDefaultValueSql(Constants.SQLCurrentTimeStamp);
-            modelBuilder.Entity<ApplicationUser>()
-                .HasIndex(u => u.Email)
-                .IsUnique();
+            modelBuilder.Entity<ApplicationUser>().HasIndex(u => u.Email).IsUnique();
+            modelBuilder.Entity<Chatroom>().HasIndex(c => c.GuidId).IsUnique();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
