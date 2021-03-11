@@ -2,12 +2,19 @@
 {
     public class Constants
     {
+        #region sql
         public const string InMemoryDatabaseName = "ChatRooms_DB";
         public const string SQLCurrentTimeStamp = "CURRENT_TIMESTAMP";
-        #region
+        #endregion
+        #region user
         public const string NotValidUser = "Not valid user";
         public const string NotUserFound = "Not user found";
         public const string EmailAlreadyUsed = "Your e-mail address is already used";
+        #endregion
+        #region stock
+        public const string StockCommandTitle = "/stock";
+        public const string StockCommandSeparator = "=";
+        public const string StockChatBotUserName = "Stock Chatbot";
         #endregion
     }
 }

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Model.Entities;
+﻿using Model.Entities;
 using System.Threading.Tasks;
 
 namespace DataAccess.Interfaces
@@ -9,5 +8,6 @@ namespace DataAccess.Interfaces
         public Task<bool> SignInAsync(string email, string password);
         public Task SignOutAsync();
         Task<ApplicationUser> GetByEmailAsync(string email);
+        Task<ApplicationUser> GetByUserNameAsync(string userName);
     }
 }

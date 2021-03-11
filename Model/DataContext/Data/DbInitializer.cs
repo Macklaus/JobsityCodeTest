@@ -3,8 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Model.Entities;
+using Model.Utils;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Model.DataContext.Data
@@ -26,10 +26,13 @@ namespace Model.DataContext.Data
                             })
                     );
 
-                    var user = new ApplicationUser { Id = 1, Email = "bot@hotmail.com", UserName = "RabbitMQ" };
-                    user.PasswordHash = hasher.HashPassword(user, "RabbitMQ");
+                    var userBot = new ApplicationUser { Id = 1, Email = "bot@hotmail.com", UserName = Constants.StockChatBotUserName };
+                    userBot.PasswordHash = hasher.HashPassword(userBot, Constants.StockChatBotUserName.Trim());
 
-                    _context.ApplicationUsers.Add(user);
+                    var userTest = new ApplicationUser { Id = 2, Email = "test@hotmail.com", UserName = "test" };
+                    userTest.PasswordHash = hasher.HashPassword(userTest, "test");
+
+                    _context.ApplicationUsers.AddRange(userBot, userTest);
                     _context.SaveChanges();
                 }
 
@@ -40,7 +43,7 @@ namespace Model.DataContext.Data
                         GuidId = Guid.NewGuid().ToString(),
                         Name = "Main chatroom",
                         CantMessageToShow = 50,
-                        Type = Utils.ChatTypeEnum.Public,
+                        Type = ChatTypeEnum.Public,
                         Messages = Enumerable.Empty<Message>()
                     };
 

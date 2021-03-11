@@ -6,19 +6,19 @@ namespace Model.Entities
 {
     public class Message
     {
-        public Message()
+        public Message() 
         {
             GuidId = Guid.NewGuid().ToString();
             Timestamp = DateTime.Now;
         }
 
-        public Message(string text, ApplicationUser user, Chatroom chat)
+        public Message(string text, string ownerName, string chatId)
         {
             GuidId = Guid.NewGuid().ToString();
             Timestamp = DateTime.Now;
             Text = text;
-            User = user;
-            Chat = chat;
+            OwnerName = ownerName;
+            ChatId = chatId;
         }
 
         [Key]
@@ -27,7 +27,7 @@ namespace Model.Entities
         public string GuidId { get; set; }
         public string Text { get; set; }
         public DateTime Timestamp { get; }
-        public ApplicationUser User { get; set; }
-        public Chatroom Chat { get; set; }
+        public string OwnerName { get; set; }
+        public string ChatId { get; set; }
     }
 }

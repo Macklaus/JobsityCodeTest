@@ -36,6 +36,16 @@ namespace DataAccess.Repositories
                 .FirstOrDefaultAsync(u => u.Email.ToUpper() == email.ToUpper());
         }
 
+        public async Task<ApplicationUser> GetByUserNameAsync(string userName)
+        {
+            if (string.IsNullOrEmpty(userName))
+            {
+                return null;
+            }
+            return await _context.ApplicationUsers
+                .FirstOrDefaultAsync(u => u.UserName.ToUpper() == userName.ToUpper());
+        }
+
         public async Task<bool> SignInAsync(string email, string password)
         {
             var user = await GetByEmailAsync(email);

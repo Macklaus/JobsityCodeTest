@@ -58,8 +58,8 @@ namespace WebApi.Extensions
             {
                 GuidId = entity.GuidId,
                 Text = entity.Text,
-                ChatId = entity.Chat.GuidId,
-                OwnerName = entity.User.UserName,
+                ChatId = entity.ChatId,
+                OwnerName = entity.OwnerName,
                 Timestamp = entity.Timestamp
             };
         }

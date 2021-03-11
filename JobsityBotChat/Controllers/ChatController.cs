@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebApi.Models;
 using WebApi.Extensions;
+using WebApi.Models.Requests;
 
 namespace WebApi.Controllers
 {
@@ -40,23 +41,34 @@ namespace WebApi.Controllers
             return messages.MapToWebModelList();
         }
 
-        [HttpPost("message")]
-        public async Task<IActionResult> InsertMessage(string chatId, Message message)
+        [HttpGet("chat/{chatId}")]
+        public async Task<Chatroom> GetChatroom(string chatId)
         {
-            if (message == null)
-                return BadRequest(message);
+            var chatroom = await _chatRepository.FindByGuidId(chatId);
+            return chatroom.MapToWebModel();
+        }
 
-            if (string.IsNullOrEmpty(chatId))
-                return BadRequest(chatId);
+        [HttpPost("message")]
+        public async Task<IActionResult> InsertMessage(InsertMessageModel messageRequest)
+        {
+            if (messageRequest == null)
+                return BadRequest(messageRequest);
 
-            var messageResponse = await _chatRepository.InsertNewMessageAsync(chatId, message.MapToEntityModel());
+            if (string.IsNullOrEmpty(messageRequest.ChatId))
+                return BadRequest(messageRequest.ChatId);
+
+            if(messageRequest.OwnerName == null)
+                return BadRequest(messageRequest.OwnerName);
+
+            var messageResponse = await _chatRepository
+                .InsertNewMessageAsync(messageRequest.ChatId, messageRequest.Text, messageRequest.OwnerName);
 
             if (messageResponse == null)
-                return NotFound(chatId);
+                return NotFound(messageRequest.ChatId);
 
             await _messageRepository.CreateAsync(messageResponse);
 
-            return Ok();
+            return Ok(messageResponse);
         }
 
         [HttpPost("update-cant-message")]

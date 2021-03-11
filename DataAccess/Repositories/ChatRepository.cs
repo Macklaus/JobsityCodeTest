@@ -1,8 +1,9 @@
 ﻿using DataAccess.Interfaces;
+using DataAccess.Services;
 using Microsoft.EntityFrameworkCore;
 using Model.DataContext;
 using Model.Entities;
-using System;
+using Model.Utils;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,8 +12,12 @@ namespace DataAccess.Repositories
 {
     public class ChatRepository : GenericRepository<Chatroom>, IChatRepository
     {
+        private readonly IStockService _stockService;
 
-        public ChatRepository(ChatDbContext context) : base(context) { }
+        public ChatRepository(ChatDbContext context, IStockService stockService) : base(context) 
+        {
+            _stockService = stockService;
+        }
 
         public async Task<Chatroom> FindByGuidId(string guid)
         {
@@ -38,26 +43,39 @@ namespace DataAccess.Repositories
             return messages;
         }
 
-        public async Task<Message> InsertNewMessageAsync(string chatId, Message message)
+        public async Task<Message> InsertNewMessageAsync(string chatId, string messageText, string userName)
         {
-            var chatroom = await _context.ChatRooms.Include(x => x.Messages)
-                .FirstOrDefaultAsync(x => x.GuidId == chatId);
+            var chatroom = await FindByGuidId(chatId);
 
             if (chatroom != null)
             {
-                var newMessage = new Message(message.Text, message.User, message.Chat);
-                if(chatroom.Messages != null)
+                Message message;
+                if (messageText.StartsWith(Constants.StockCommandTitle))
                 {
-                    chatroom.Messages.Append(newMessage);
+                    var command = messageText.Split(Constants.StockCommandSeparator)[1];
+                    messageText = await _stockService.SendRequestAsync(command);
+                    message = new Message(messageText, Constants.StockChatBotUserName, chatId);
+                } else
+                {
+                    message = new Message(messageText, userName, chatId);
+                }
+
+                if (chatroom.Messages != null)
+                {
+                    chatroom.Messages = chatroom.Messages.Append(message);
                 } else
                 {
                     var newMessageList = new List<Message>();
-                    newMessageList.Add(newMessage);
+                    newMessageList.Add(message);
                     chatroom.Messages = newMessageList;
                 }
-            }
 
-            return message;
+                Update(chatroom);
+                return message;
+            } else
+            {
+                return null;
+            }
         }
 
         public async Task<bool> UpdateCantMessageToShowInChatroomAsync(string chatId, int newCantMessageToShow)

@@ -8,7 +8,7 @@ namespace DataAccess.Interfaces
     {
         public Task<IEnumerable<Message>> GetMessagesByChatIdAsync(string chatId);
 
-        public Task<Message> InsertNewMessageAsync(string chatId, Message message);
+        public Task<Message> InsertNewMessageAsync(string chatId, string messageText, string userName);
 
         public Task<bool> UpdateCantMessageToShowInChatroomAsync(string chatId, int newCantMessageToShow);
 

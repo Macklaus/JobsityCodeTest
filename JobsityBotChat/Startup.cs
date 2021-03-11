@@ -1,6 +1,7 @@
 using DataAccess;
 using DataAccess.Interfaces;
 using DataAccess.Repositories;
+using DataAccess.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,6 +15,7 @@ using Microsoft.OpenApi.Models;
 using Model.DataContext;
 using Model.Entities;
 using Model.Stores;
+using System;
 
 namespace JobsityBotChat
 {
@@ -49,6 +51,8 @@ namespace JobsityBotChat
             services.AddScoped<IChatRepository, ChatRepository>();
             services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
             services.AddScoped<IMessageRepository, MessageRepository>();
+            services.AddScoped<IMessageRepository, MessageRepository>();
+            services.AddScoped<IStockService, StockService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -67,6 +71,13 @@ namespace JobsityBotChat
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            //var webSocketOptions = new WebSocketOptions()
+            //{
+            //    KeepAliveInterval = TimeSpan.FromSeconds(1),
+            //};
+
+            //app.UseWebSockets();
 
             app.UseEndpoints(endpoints =>
             {
