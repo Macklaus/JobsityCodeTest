@@ -10,5 +10,7 @@ namespace DataAccess
         Task CreateAsync(T entity);
 
         void Update(T entity);
+
+        Task UpdateAsync(T entity);
     }
 }

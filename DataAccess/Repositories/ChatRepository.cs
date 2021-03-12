@@ -62,7 +62,7 @@ namespace DataAccess.Repositories
 
                 if (chatroom.Messages != null)
                 {
-                    chatroom.Messages = chatroom.Messages.Append(message);
+                    chatroom.Messages = chatroom.Messages.Append(message).ToList();
                 } else
                 {
                     var newMessageList = new List<Message>();
@@ -70,7 +70,7 @@ namespace DataAccess.Repositories
                     chatroom.Messages = newMessageList;
                 }
 
-                Update(chatroom);
+                await UpdateAsync(chatroom);
                 return message;
             } else
             {
