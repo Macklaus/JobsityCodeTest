@@ -22,12 +22,12 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreateAsync(Chatroom chatroom)
+        public async Task<IActionResult> CreateAsync(ChatroomRequest chatroom)
         {
-            if (chatroom == null)
+            if (chatroom == null || !chatroom.Validate())
                 return BadRequest(chatroom);
 
-            var entityModel = chatroom.MapToEntityModel();
+            var entityModel = chatroom.ConvertToModelEntity();
             entityModel.GuidId = Guid.NewGuid().ToString();
             entityModel.Messages = new List<Model.Entities.Message>();
             await _chatRepository.CreateAsync(entityModel);
@@ -49,7 +49,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("message")]
-        public async Task<IActionResult> InsertMessage(InsertMessageModel messageRequest)
+        public async Task<IActionResult> InsertMessage([FromBody] InsertMessageModel messageRequest)
         {
             if (messageRequest == null)
                 return BadRequest(messageRequest);

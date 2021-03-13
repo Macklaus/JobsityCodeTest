@@ -1,0 +1,58 @@
+<div class="d-flex-columns main-container text-center">
+  <h1>Stock Chat</h1>
+  <mat-card class="user-container text-center" *ngIf="!isUserAdded && !hasUserChoosenChat">
+    <h2>Sign Up to chat</h2>
+    <mat-form-field class="d-flex-columns user-form-field">
+      <mat-label>User Name</mat-label>
+      <input matInput type="text" [(ngModel)]="username">
+    </mat-form-field>
+    <mat-form-field class="user-form-field">
+      <mat-label>Email</mat-label>
+      <input matInput type="text" [(ngModel)]="email">
+    </mat-form-field>
+    <mat-form-field class="user-form-field">
+      <mat-label>Password</mat-label>
+      <input matInput type="password" [(ngModel)]="password">
+    </mat-form-field>
+    <button class="sign-up-user uppercase" mat-raised-button color="primary" (click)="addUser()">Sing up</button>
+  </mat-card>
+
+  <!--chat list-->
+  <mat-card class="chats-container" *ngIf="isUserAdded && !hasUserChoosenChat">
+    <h2>Available Chats</h2>
+    <div class="chat-details" *ngFor="let chat of chatrooms">
+      <p class="chat-name-title"><b>Name:</b></p>
+      <p class="chat-name-text">{{ chat.name }}</p>
+      <button class="uppercase" mat-mini-fab color="accent" (click)="getMessages(chat.guidId)">in</button>
+    </div>
+  </mat-card>
+
+  <!--message List-->
+  <mat-card class="messages-container" *ngIf="hasUserChoosenChat">
+    <div *ngFor="let msg of messages">
+      <div class="message-container left-message" *ngIf="msg.ownerName !== username">
+        <div class="message-username-container">
+          <p class="message-username">{{msg.ownerName}}</p>
+          <p class="message-username">{{msg.timestamp}}</p>
+        </div>
+        <p class="message-text">{{msg.text}}</p>
+      </div>
+      <div class="message-container right-message" *ngIf="msg.ownerName === username">
+        <div class="message-username-container">
+          <p class="message-username">{{msg.ownerName}}</p>
+          <p class="message-username">{{msg.timestamp}}</p>
+        </div>
+        <p class="message-text">{{msg.text}}</p>
+      </div>
+    </div>
+  </mat-card>
+  <mat-card class="user-text-container" *ngIf="hasUserChoosenChat">
+    <mat-form-field class="d-flex-columns user-text-field">
+      <mat-label>Insert new message</mat-label>
+      <input matInput type="text" [(ngModel)]="userText">
+    </mat-form-field>
+    <button class="send-user-text uppercase" mat-raised-button color="primary" (click)="sendMessage()">Send</button>
+  </mat-card>
+</div>
+
+

@@ -1,5 +1,6 @@
 ﻿using CsvHelper;
 using Model.Entities;
+using Model.Utils;
 using System;
 using System.Globalization;
 using System.IO;
@@ -15,20 +16,26 @@ namespace DataAccess.Services
         public async Task<string> SendRequestAsync(string command)
         {
             var url = String.Format(baseURI, command);
-            using (var httpClient = new HttpClient())
+            try
             {
-                using (var response = await httpClient.GetAsync(url))
+                using (var httpClient = new HttpClient())
                 {
-                    if(response.IsSuccessStatusCode)
+                    using (var response = await httpClient.GetAsync(url))
                     {
-                        var apiResponse = await response.Content.ReadAsStreamAsync();
-                        if (apiResponse != null)
+                        if (response.IsSuccessStatusCode)
                         {
-                            return ReadStreamResponse(apiResponse, command);
+                            var apiResponse = await response.Content.ReadAsStreamAsync();
+                            if (apiResponse != null)
+                            {
+                                return ReadStreamResponse(apiResponse, command);
+                            }
                         }
+                        return CommandNotValidMessage(command);
                     }
-                    return CommandNotValidMessage(command);
                 }
+            } catch (Exception)
+            {
+                return Constants.UnavailableService;
             }
         }
 
@@ -41,7 +48,7 @@ namespace DataAccess.Services
                     using (var csv = new CsvReader(streamReader, CultureInfo.InvariantCulture))
                     {
                         var records = csv.GetRecords<Stock>().FirstOrDefault();
-                        if (records.Open.Equals("N/D"))
+                        if (records.Open.Equals(Constants.StockNoDataFromCommandText))
                         {
                             return CommandNotValidMessage(command);
                         }

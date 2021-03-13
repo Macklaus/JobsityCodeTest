@@ -29,10 +29,7 @@ namespace Model.DataContext.Data
                     var userBot = new ApplicationUser { Id = 1, Email = "bot@hotmail.com", UserName = Constants.StockChatBotUserName };
                     userBot.PasswordHash = hasher.HashPassword(userBot, Constants.StockChatBotUserName.Trim());
 
-                    var userTest = new ApplicationUser { Id = 2, Email = "test@hotmail.com", UserName = "test" };
-                    userTest.PasswordHash = hasher.HashPassword(userTest, "test");
-
-                    _context.ApplicationUsers.AddRange(userBot, userTest);
+                    _context.ApplicationUsers.Add(userBot);
                     _context.SaveChanges();
                 }
 

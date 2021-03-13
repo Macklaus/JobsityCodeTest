@@ -15,6 +15,8 @@
         public const string StockCommandTitle = "/stock";
         public const string StockCommandSeparator = "=";
         public const string StockChatBotUserName = "Stock Chatbot";
+        public const string StockNoDataFromCommandText = "N/D";
+        public const string UnavailableService = "The service is not working. Try it later";
         #endregion
     }
 }

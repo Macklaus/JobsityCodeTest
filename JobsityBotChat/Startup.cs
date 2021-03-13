@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,12 +16,13 @@ using Microsoft.OpenApi.Models;
 using Model.DataContext;
 using Model.Entities;
 using Model.Stores;
-using System;
 
 namespace JobsityBotChat
 {
     public class Startup
     {
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -34,13 +36,26 @@ namespace JobsityBotChat
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAd"));
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                  builder =>
+                                  {
+                                      builder.WithOrigins("http://localhost:4200")
+                                      .AllowAnyHeader().AllowAnyMethod();
+                                  });
+            });
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "JobsityBotChat", Version = "v1" });
             });
 
-            services.AddDbContext<ChatDbContext>(options => options.UseInMemoryDatabase(databaseName: Model.Utils.Constants.InMemoryDatabaseName));
+            services.AddDbContext<ChatDbContext>(
+                options => options
+                .UseInMemoryDatabase(databaseName: Model.Utils.Constants.InMemoryDatabaseName)
+                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning)));
 
             services.AddIdentity<ApplicationUser, IdentityRole<int>>()
                 .AddUserStore<ApplicationUserStore>()
@@ -68,6 +83,8 @@ namespace JobsityBotChat
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(MyAllowSpecificOrigins);
 
             app.UseAuthentication();
             app.UseAuthorization();

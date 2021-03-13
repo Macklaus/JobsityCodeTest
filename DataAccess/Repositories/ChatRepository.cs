@@ -36,7 +36,7 @@ namespace DataAccess.Repositories
                 {
                     messages = chatroom.Messages
                         .Take(chatroom.CantMessageToShow)
-                        .OrderByDescending(x => x.Timestamp);
+                        .OrderBy(x => x.Timestamp);
                 }
             }
 
