@@ -6,16 +6,14 @@ import {MatInputModule} from '@angular/material/input';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import { HttpClientModule } from '@angular/common/http';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { ScrollToBottomDirective } from './directive/scroll-to-bottom.directive';
-
 @NgModule({
   declarations: [
-    AppComponent,
-    ScrollToBottomDirective
+    AppComponent
   ],
   imports: [
     BrowserModule,
@@ -25,7 +23,8 @@ import { ScrollToBottomDirective } from './directive/scroll-to-bottom.directive'
     BrowserAnimationsModule,
     MatIconModule,
     FormsModule,
-    MatButtonModule
+    MatButtonModule,
+    MatSnackBarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Model.DataContext;
 using Model.Entities;
+using Model.Exceptions;
 using Model.Stores;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,6 +24,14 @@ namespace DataAccess.Repositories
 
         public override async Task<IdentityResult> CreateAsync(ApplicationUser user)
         {
+            var userByUsername = await GetByUserNameAsync(user.UserName);
+            if (userByUsername != null)
+                throw new IdentifierAlreadyInUseException(user.UserName);
+
+            var userByEmail = await GetByEmailAsync(user.Email);
+            if (userByEmail != null)
+                throw new IdentifierAlreadyInUseException(user.Email);
+
             return await _store.CreateAsync(user, CancellationToken.None);
         }
 

@@ -1,5 +1,6 @@
 ﻿using DataAccess.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Model.Exceptions;
 using System.Threading.Tasks;
 using WebApi.Extensions;
 using WebApi.Models;
@@ -27,9 +28,15 @@ namespace WebApi.Controllers
 
             if (!applicationUser.Validate())
                 return BadRequest(user);
-            
-            await _repository.CreateAsync(applicationUser);
-            return Ok(user);
+            try
+            {
+                await _repository.CreateAsync(applicationUser);
+                return Ok(user);
+            }
+            catch (IdentifierAlreadyInUseException ex)
+            {
+                return Conflict(ex.Message);
+            }
         }
 
         [HttpPost("signin")]

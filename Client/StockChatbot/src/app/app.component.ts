@@ -3,9 +3,8 @@ import { ChatService } from '../app/services/chat.service';
 import { Chat } from '../app/models/chat';
 import { Message } from './models/message';
 import { interval, Subscription } from 'rxjs';
-import { ScrollToBottomDirective } from './directive/scroll-to-bottom.directive';
-import { ViewChild } from '@angular/core';
-import { ElementRef } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-root',
@@ -25,18 +24,25 @@ export class AppComponent {
 
   subscription: Subscription;
 
-  constructor(private service: ChatService) {
+  constructor(private service: ChatService, private _snackBar: MatSnackBar) {
     const source = interval(1000);
     this.subscription = source.subscribe(val => this.getMessages(this.chatIdChoosen));
   }
 
   addUser(){
-    this.service.addUser(this.username, this.email, this.password).subscribe(response => {
-      if(response.status == 200){
+    this.service.addUser(this.username, this.email, this.password).subscribe(
+    response => {
+      if(response.ok){
         this.service.getChatrooms().subscribe((response: Chat[]) => {
           this.chatrooms = response;
           this.isUserAdded = true;
         });
+      }
+    }, (errorResponse: HttpErrorResponse) => {
+      if(errorResponse.status == 409){
+        if('string' == typeof errorResponse.error){
+          this.openSnackBar(errorResponse.error);
+        }
       }
     });
   }
@@ -60,6 +66,10 @@ export class AppComponent {
         }
       });
     }
+  }
+
+  openSnackBar(message: string) {
+    this._snackBar.open(message, 'CERRAR', {duration: 5000});
   }
 
   ngOnDestroy() {

@@ -19,9 +19,9 @@ export class ChatService {
 
   constructor(private http: HttpClient) { }
 
-  addUser(userName: string, email: string, password: string): Observable<HttpResponse<User>> {
+  addUser(userName: string, email: string, password: string): Observable<HttpResponse<Object>> {
     const user: User = {userName: userName, email: email, passwordHash: password};
-    return this.http.post<User>(this.userUrl, user, { observe: 'response' });
+    return this.http.post(this.userUrl, user, { observe: 'response' });
   }
 
   getChatrooms(): Observable<Chat[]> {
